@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐻 El Oso Admin - Añadir Eventos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .category-select {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .category-option {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-option:hover {
+            background: #e3f2fd;
+        }
+
+        .category-option.selected {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .preview-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .json-output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐻 Panel de Administración</h1>
+            <p>Añade eventos fácilmente a tu calendario de Madrid</p>
+        </div>
+
+        <div class="form-container">
+            <div class="instructions">
+                <h3>📋 Cómo usar:</h3>
+                <p>1. Llena el formulario con los datos del evento</p>
+                <p>2. Haz clic en "Generar JSON"</p>
+                <p>3. Copia el código generado</p>
+                <p>4. Pégalo en tu archivo events.json de GitHub</p>
+            </div>
+
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="title">🎯 Título del Evento *</label>
+                    <input type="text" id="title" placeholder="Ej: Concierto de Jazz en Café Central" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">📅 Fecha *</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">🕒 Hora</label>
+                        <input type="time" id="time" placeholder="20:00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">📍 Ubicación *</label>
+                    <input type="text" id="location" placeholder="Ej: Café Central, Museo Reina Sofía" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">🏠 Dirección completa</label>
+                    <input type="text" id="address" placeholder="Ej: Plaza del Ángel, 10, Madrid">
+                </div>
+
+                <div class="form-group">
+                    <label>🎭 Categoría *</label>
+                    <div class="category-select">
+                        <div class="category-option" data-category="cultura">
+                            🎭 Cultura (teatro, exposiciones, conferencias)
+                        </div>
+                        <div class="category-option" data-category="musica">
+                            🎵 Música (conciertos, festivales, jazz)
+                        </div>
+                        <div class="category-option" data-category="gastronomia">
+                            🍽️ Gastronomía (restaurantes, tours, degustaciones)
+                        </div>
+                        <div class="category-option" data-category="arte">
+                            🎨 Arte (galerías, mercados, arte urbano)
+                        </div>
+                        <div class="category-option" data-category="deporte">
+                            ⚽ Deporte (partidos, eventos deportivos)
+                        </div>
+                        <div class="category-option" data-category="familiar">
+                            👨‍👩‍👧‍👦 Familiar (actividades para familias)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">📝 Descripción *</label>
+                    <textarea id="description" placeholder="Describe el evento, qué pueden esperar los asistentes..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">💰 Precio</label>
+                        <input type="text" id="price" placeholder="Ej: 20€, Gratis, 15-25€">
+                    </div>
+                    <div class="form-group">
+                        <label for="metro">🚇 Metro más cercano</label>
+                        <input type="text" id="metro" placeholder="Ej: Sol (L1,L2,L3)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="link">🔗 Enlace web</label>
+                    <input type="url" id="link" placeholder="https://ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">🏷️ Tags (separar con comas)</label>
+                    <input type="text" id="tags" placeholder="jazz, noche, centro">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="featured"> 
+                        ⭐ Evento destacado
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">🚀 Generar JSON</button>
+            </form>
+
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <div class="preview-title">📋 Código generado:</div>
+                <div class="json-output" id="jsonOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 Copiar código</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCategory = '';
+
+        // Manejar selección de categoría
+        document.querySelectorAll('.category-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remover selección anterior
+                document.querySelectorAll('.category-option').forEach(opt => 
+                    opt.classList.remove('selected')
+                );
+                
+                // Seleccionar nueva categoría
+                this.classList.add('selected');
+                selectedCategory = this.dataset.category;
+            });
+        });
+
+        // Manejar envío del formulario
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedCategory) {
+                alert('Por favor selecciona una categoría');
+                return;
+            }
+
+            const formData = {
+                id: `EVT${Date.now().toString().slice(-6)}`,
+                title: document.getElementById('title').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value || null,
+                location: document.getElementById('location').value,
+                address: document.getElementById('address').value || null,
+                category: selectedCategory,
+                description: document.getElementById('description').value,
+                price: document.getElementById('price').value || null,
+                metro: document.getElementById('metro').value || null,
+                link: document.getElementById('link').value || null,
+                tags: document.getElementById('tags').value ? 
+                      document.getElementById('tags').value.split(',').map(tag => tag.trim()) : [],
+                featured: document.getElementById('featured').checked
+            };
+
+            // Limpiar campos vacíos
+            Object.keys(formData).forEach(key => {
+                if (formData[key] === null || formData[key] === '') {
+                    delete formData[key];
+                }
+            });
+
+            // Generar JSON
+            const jsonOutput = JSON.stringify(formData, null, 2);
+            
+            // Mostrar resultado
+            document.getElementById('jsonOutput').textContent = jsonOutput;
+            document.getElementById('previewSection').style.display = 'block';
+            
+            // Scroll al resultado
+            document.getElementById('previewSection').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+
+        // Copiar al portapapeles
+        function copyToClipboard() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                alert('¡Código copiado al portapapeles!');
+            });
+        }
+
+        // Establecer fecha de hoy como mínimo
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
